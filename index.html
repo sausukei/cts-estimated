@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新千歳空港 国際線到着便情報</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🛬 新千歳空港 (CTS)</h1>
+            <h2>国際線フライト情報</h2>
+            <div id="currentDate" class="current-date"></div>
+            <div class="update-time">
+                <span id="lastUpdate">データ取得中...</span>
+                <button id="refreshBtn" class="refresh-btn">🔄 更新</button>
+            </div>
+        </header>
+        <div id="pagination" class="pagination">
+            <button id="prevBtn" class="pagination-btn">前へ</button>
+            <span id="pageInfo" class="page-info"></span>
+            <button id="nextBtn" class="pagination-btn">次へ</button>
+        </div>
+        <div class="controls">
+            <button id="refreshBtn" class="refresh-btn">🔄 更新</button>
+            <button id="currentTimeBtn" class="refresh-btn">📍 現在時刻</button>
+            <div id="lastUpdate" class="last-update">最終更新: 未取得</div>
+        </div>
+
+
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>フライト情報を読み込んでいます...</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;">
+            <p>⚠️ データの取得に失敗しました</p>
+            <button onclick="loadFlightData()">再試行</button>
+        </div>
+
+        <div id="pagination" class="pagination" style="display: none;"></div>
+
+        <div id="flightList" class="flight-list"></div>
+
+        <div id="noFlights" class="no-flights" style="display: none;">
+            <p>📭 現在、表示可能な国際線到着便はありません</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

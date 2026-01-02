@@ -1,0 +1,130 @@
+日本の空港IATAコード一覧
+参照元: https://www.airlineguide.jp/airports/japan/
+生成日: 2026年1月3日
+
+========================================
+主要空港
+========================================
+HND - 東京・羽田 (Tokyo International Airport - Haneda)
+NRT - 成田 (Narita International Airport)
+KIX - 大阪・関西 (Kansai International Airport)
+FUK - 福岡 (Fukuoka Airport)
+CTS - 札幌・新千歳 (New Chitose Airport)
+ITM - 大阪・伊丹 (Osaka International Airport - Itami)
+NGO - 名古屋・中部 (Chubu Centrair International Airport)
+KOJ - 鹿児島 (Kagoshima Airport)
+OKA - 那覇 (Naha Airport)
+UKB - 神戸 (Kobe Airport)
+
+========================================
+地方空港
+========================================
+KMQ - 小松 (Komatsu Airport)
+SDJ - 仙台 (Sendai Airport)
+TTJ - 鳥取 (Tottori Airport)
+KCZ - 高知 (Kochi Airport)
+TAK - 高松 (Takamatsu Airport)
+FSZ - 静岡 (Shizuoka Airport)
+AOJ - 青森 (Aomori Airport)
+OKI - 隠岐の島 (Oki Airport)
+NGS - 長崎 (Nagasaki Airport)
+KUH - 釧路 (Kushiro Airport)
+IBR - 茨城 (Ibaraki Airport)
+HNA - 花巻 (Hanamaki Airport)
+NTQ - 穴水・能登 (Noto Airport)
+MBE - 紋別 (Monbetsu Airport)
+YGJ - 米子 (Yonago Airport)
+TNE - 種子島 (Tanegashima Airport)
+WKJ - 稚内 (Wakkanai Airport)
+AXT - 秋田 (Akita Airport)
+FUJ - 福江島 (Fukue Airport)
+FKS - 福島 (Fukushima Airport)
+IWJ - 石見 (Iwami Airport)
+KMJ - 熊本 (Kumamoto Airport)
+OKE - 沖永良部 (Okinoerabu Airport)
+MMJ - 松本 (Matsumoto Airport)
+MYJ - 松山 (Matsuyama Airport)
+AKJ - 旭川 (Asahikawa Airport)
+ISG - 石垣島 (New Ishigaki Airport)
+KIJ - 新潟 (Niigata Airport)
+TKS - 徳島 (Tokushima Airport)
+TKN - 徳之島 (Tokunoshima Airport)
+SYO - 庄内 (Shonai Airport)
+HIJ - 広島 (Hiroshima Airport)
+OBO - 帯広 (Obihiro Airport)
+IWK - 岩国 (Iwakuni Kintaikyo Airport)
+OKJ - 岡山 (Okayama Airport)
+GAJ - 山形 (Yamagata Airport)
+UBJ - 山口宇部 (Yamaguchi-Ube Airport)
+KUM - 屋久島 (Yakushima Airport)
+NKM - 名古屋・小牧 (Komaki Airport - Nagoya Airport)
+TSJ - 対馬市 (Tsushima Airport)
+TOY - 富山 (Toyama Airport)
+KMI - 宮崎 (Miyazaki Airport)
+MMY - 宮古島 (Miyako Airport)
+MMB - 女満別・網走 (Memanbetsu Airport)
+OIR - 奥尻町 (Okushiri Airport)
+ASJ - 奄美大島 (Amami Airport)
+AXJ - 天草 (Amakusa Airport)
+ONJ - 大館能代 (Odate-Noshiro Airport)
+OIT - 大分 (Oita Airport)
+TRA - 多良間島 (Tarama Airport)
+IKI - 壱岐市 (Iki Airport)
+KKX - 喜界 (Kikai Airport)
+SHM - 白浜町 (Nanki-shirahama Airport)
+MMD - 南大東 (Minami-Daito Airport)
+KTD - 北大東 (Kitadaito Airport)
+KKJ - 北九州 (Kitakyushu Airport)
+RIS - 利尻富士町 (Rishiri Airport)
+HKD - 函館 (Hakodate Airport)
+IZO - 出雲 (Izumo Airport)
+HAC - 八丈町 (Hachijojima Airport)
+HSG - 佐賀 (Saga Airport)
+TJH - 豊岡市・但馬 (Tajima Airport)
+UEO - 久米島 (Kumejima Airport)
+SHB - 中標津町 (Nakashibetsu Airport)
+OKD - 札幌・丘珠 (Okadama Airport)
+OGN - 与那国 (Yonaguni Airport)
+RNJ - 与論 (Yoron Airport)
+SHI - 下地島 (Shimojijima Airport)
+MSJ - 三沢 (Misawa Airport)
+AGJ - 粟国島 (Aguni Airport)
+FKJ - 福井市 (Fukui Airport)
+RBJ - 礼文町 (Rebun Airport)
+HTR - 波照間 (Hateruma Airport)
+KJP - 慶良間 (Kerama Airport)
+HIW - 広島西飛行場 (Hiroshima West Airport)
+OIM - 大島町 (Oshima Airport)
+SDS - 佐渡市 (Sado Airport)
+IEJ - 伊江島 (Iejima Airport)
+MYE - 三宅村 (Miyakejima Airport)
+
+========================================
+その他（軍用・特殊空港等）
+========================================
+OSA - All Airports (Osaka)
+BPU - Beppu Airport
+QGU - Gifu Airport
+HHE - Hachinohe Air Base
+IWO - Iwo Jima Air Base
+DNA - Kadena Air Base
+KUJ - Kushimoto Airport
+MUS - Minami Torishima Airport
+IHA - Niihama Airport
+IIN - Nishinoomote Airport
+QUT - Utsunomiya Airport
+
+========================================
+統計
+========================================
+合計: 110空港
+
+主要空港: 10
+地方空港: 89
+その他: 11
+
+========================================
+IATAコード一覧
+========================================
+HND, NRT, KIX, FUK, CTS, ITM, NGO, KOJ, OKA, UKB, KMQ, SDJ, TTJ, KCZ, TAK, FSZ, AOJ, OKI, NGS, KUH, IBR, HNA, NTQ, MBE, YGJ, TNE, WKJ, AXT, FUJ, FKS, IWJ, KMJ, OKE, MMJ, MYJ, AKJ, ISG, KIJ, TKS, TKN, SYO, HIJ, OBO, IWK, OKJ, GAJ, UBJ, KUM, NKM, TSJ, TOY, KMI, MMY, MMB, OIR, ASJ, AXJ, ONJ, OIT, TRA, IKI, KKX, SHM, MMD, KTD, KKJ, RIS, HKD, IZO, HAC, HSG, TJH, UEO, SHB, OKD, OGN, RNJ, SHI, MSJ, AGJ, FKJ, RBJ, HTR, KJP, HIW, OIM, SDS, IEJ, MYE, OSA, BPU, QGU, HHE, IWO, DNA, KUJ, MUS, IHA, IIN, QUT
+
