@@ -65,7 +65,7 @@ npx wrangler versions upload  # プレビューバージョンのアップロー
 npx wrangler deploy --dry-run # ビルド・公開設定の検証（公開しない）
 ```
 
-GitHub Actionsでも、テスト・ビルド・生成HTMLの検証を実行します。CloudflareはNode.js 22以降で実行してください。`NEXT_PUBLIC_*` を含め、アプリ用のAPIキーは不要です。
+GitHub Actionsでも、テスト・ビルド・生成HTMLの検証を実行します。CloudflareはNode.js 22以降で実行してください。フライト取得用のAPIキーは不要です。GA4は任意で設定できます。
 
 ## 関連リンク
 
@@ -75,3 +75,22 @@ GitHub Actionsでも、テスト・ビルド・生成HTMLの検証を実行し�
 - [Cloudflare Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/)
 
 フライト情報には更新の遅れや取得エラーが発生する場合があります。最新の運航状況は航空会社でもご確認ください。
+
+## GA4による利用状況の確認
+
+GA4のWebデータストリームの測定ID（`G-...`）を、Cloudflare Workers Buildsの**ビルド環境変数** `NEXT_PUBLIC_GA_ID` に設定して再デプロイしてください。静的出力に埋め込むため、Workerの実行時変数だけでは有効になりません。ローカルでは `.env.example` を `.env.local` にコピーして設定します。未設定・形式不正の場合、GAスクリプトは読み込まれません。測定IDは公開情報です。
+
+GA4の拡張計測で「ページビュー」と「ブラウザの履歴イベントに基づくページの変更」を有効にします。ページビューはGoogleタグに任せ、アプリから重複送信しません。ページパスから空港・国内線／国際線ごとの閲覧数を確認できます。
+
+| イベント | 内容 | パラメータ |
+| --- | --- | --- |
+| `switch_airport` | 空港の切り替え操作 | `airport`, `mode`（切り替え先） |
+| `switch_mode` | 国内線／国際線の切り替え操作 | `airport`, `mode`（切り替え先） |
+| `flight_load_success` | 初回・手動・5分ごとの取得成功 | `airport`, `mode`, `flight_count`, `remaining_count` |
+| `flight_load_error` | データ取得失敗 | `airport`, `mode`, `reason`（`timeout` / `fetch_failed`） |
+
+`airport`・`mode`・`reason` は必要に応じてイベントスコープのカスタムディメンションに登録してください。取得件数は各取得時点の値で、イベントをまたいで合算した数値は当日の総便数ではありません。エラー本文やフライトデータ自体は送信しません。
+
+設定後、GA4のリアルタイム画面でアクセスとイベントを確認してください。広告ブロッカー等で欠測するため、GA4は稼働監視や障害通知を保証するものではありません。
+
+参考：[GoogleのSPA計測ガイド](https://developers.google.com/analytics/devguides/collection/ga4/single-page-applications?hl=ja)

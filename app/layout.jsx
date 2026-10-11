@@ -1,4 +1,5 @@
 import './globals.css';
+import Analytics from '../components/analytics';
 import { SITE_URL } from '../lib/airports.mjs';
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -8,5 +9,5 @@ export const metadata = {
 };
 export const viewport = { width: 'device-width', initialScale: 1, themeColor: '#f4f6f8' };
 export default function Layout({ children }) {
-  return <html lang="ja"><body>{children}</body></html>;
+  return <html lang="ja"><body>{children}<Analytics /></body></html>;
 }
