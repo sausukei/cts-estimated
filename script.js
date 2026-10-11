@@ -186,7 +186,6 @@ async function loadFlightData() {
   try {
     // 全ページのデータを取得
     allFlights = [];
-    const currentTimestamp = Math.floor(Date.now() / 1000);
 
     // 今日の日付を取得（00:00:00から23:59:59まで）
     const today = new Date();
@@ -196,7 +195,8 @@ async function loadFlightData() {
 
     for (let page = 1; page <= totalPages; page++) {
       const apiUrl =
-        `${API_BASE_URL}?code=${AIRPORT_CODE}&plugin[]=schedule&plugin-setting[schedule][mode]=arrivals&plugin-setting[schedule][timestamp]=${currentTimestamp}&limit=100&page=${page}`;
+        // 予定時刻を過ぎた未到着便も取得できるよう、当日0時を基準にする。
+        `${API_BASE_URL}?code=${AIRPORT_CODE}&plugin[]=schedule&plugin-setting[schedule][mode]=arrivals&plugin-setting[schedule][timestamp]=${todayStart}&limit=100&page=${page}`;
 
       console.log(`Fetching page ${page}:`, apiUrl);
 
@@ -223,8 +223,11 @@ async function loadFlightData() {
         // 国際線かつ今日の日付のフライトのみ
         const isInternational = originCode &&
           !DOMESTIC_AIRPORTS.includes(originCode);
-        const isToday = arrivalTime && arrivalTime >= todayStart &&
-          arrivalTime <= todayEnd;
+        // 翌日まで遅延した当日便も、予定日を基準に表示に残す。
+        const isToday = [time.scheduled?.arrival, arrivalTime].some(
+          (timestamp) => timestamp && timestamp >= todayStart &&
+            timestamp <= todayEnd,
+        );
 
         return isInternational && isToday;
       });
