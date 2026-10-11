@@ -58,6 +58,7 @@ function setup(flights) {
   vm.runInContext(source, context);
   return {
     requests,
+    elements,
     async load(hour) {
       now = at(hour);
       await vm.runInContext('loadFlightData()', context);
@@ -79,6 +80,30 @@ test('refresh retains delayed arrivals after both scheduled and estimated times'
   for (const params of app.requests) {
     assert.equal(Number(params.get('plugin-setting[schedule][timestamp]')), start);
   }
+});
+
+test('summary counts all pages and retains overdue flights until arrival or cancellation', async () => {
+  const flights = Array.from({ length: 21 }, (_, i) => flight(`FLIGHT${i}`, at(18)));
+  flights[0].flight.time.real.arrival = at(19);
+  flights[1].flight.status = { text: 'Landed 19:00' };
+  flights[2].flight.status = { text: 'Arrived' };
+  flights[3].flight.status = { text: 'Cancelled' };
+  flights[4].flight.status = { text: 'Canceled' };
+  flights[5].flight.status = { text: 'Delayed' };
+  const app = setup(flights);
+  await app.load(20);
+  assert.equal(app.elements.get('totalFlights').textContent, '21');
+  assert.equal(app.elements.get('remainingFlights').textContent, '16');
+  flights[5].flight.time.real.arrival = at(21);
+  await app.load(22);
+  assert.equal(app.elements.get('remainingFlights').textContent, '15');
+});
+
+test('summary shows zero when no flights match', async () => {
+  const app = setup([]);
+  await app.load(20);
+  assert.equal(app.elements.get('totalFlights').textContent, '0');
+  assert.equal(app.elements.get('remainingFlights').textContent, '0');
 });
 
 test('keeps today’s overnight delays and landed flights while excluding domestic and future flights', async () => {

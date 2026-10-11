@@ -59,6 +59,35 @@ header h2 {
     color: #888;
 }
 
+.flight-summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    margin: 16px 0 10px;
+}
+
+.flight-summary > div {
+    flex: 1 1 160px;
+    max-width: 280px;
+    padding: 16px;
+    border-radius: 10px;
+    background: #f5f7fa;
+    color: #555;
+}
+
+.flight-summary strong {
+    display: block;
+    margin-top: 6px;
+    font-size: 1.8em;
+    color: #667eea;
+}
+
+.flight-summary-note {
+    font-size: 0.85em;
+    color: #666;
+}
+
 .refresh-btn {
     background: #667eea;
     color: white;

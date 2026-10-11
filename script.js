@@ -182,6 +182,7 @@ async function loadFlightData() {
   errorElement.style.display = "none";
   flightListElement.innerHTML = "";
   noFlightsElement.style.display = "none";
+  updateFlightSummary();
 
   try {
     // 全ページのデータを取得
@@ -242,6 +243,8 @@ async function loadFlightData() {
 
     // 時間でソート
     sortFlightsByTime();
+    updateFlightSummary(allFlights);
+    displayCurrentDate();
 
     loadingElement.style.display = "none";
     updateLastUpdateTime();
@@ -260,6 +263,25 @@ async function loadFlightData() {
     console.error("Error fetching flight data:", error);
     loadingElement.style.display = "none";
     errorElement.style.display = "block";
+  }
+}
+
+// ページ単位ではなく、取得した当日の国際線全体を集計する。
+// 未取得・取得失敗時は0便と誤認されないよう「—」を表示する。
+function updateFlightSummary(flights = null) {
+  const total = document.getElementById("totalFlights");
+  const remaining = document.getElementById("remainingFlights");
+  if (total) total.textContent = flights ? String(flights.length) : "—";
+  if (remaining) {
+    remaining.textContent = flights
+      ? String(flights.filter((item) => {
+        const flight = item.flight || {};
+        const status = (flight.status?.text || "").toLowerCase();
+        const isFinished = flight.time?.real?.arrival ||
+          /\b(landed|arrived|cancelled|canceled)\b/.test(status);
+        return !isFinished;
+      }).length)
+      : "—";
   }
 }
 
