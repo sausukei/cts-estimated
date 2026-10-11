@@ -68,7 +68,7 @@ h2 { font-size: 18px; letter-spacing: -.03em; }
 .time-value { font-size: clamp(22px, 5.5vw, 28px); font-weight: 650; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
 .time-estimated { color: var(--accent); }
 .time-delayed { color: #aa481c; }
-.time-scheduled, .time-delayed { font-size: clamp(30px, 7vw, 34px); font-weight: 800; line-height: 1.2; }
+.time-scheduled, .time-estimated { font-size: clamp(30px, 7vw, 34px); font-weight: 800; line-height: 1.2; }
 .time-item .time-label { min-height: 16px; }
 .flight-card.flight-delayed { border-color: #e4b08b; border-left: 4px solid #b6501c; }
 .flight-delayed .status-badge { color: #8c3610; background: #ffead9; font-size: 12px; font-weight: 750; }
