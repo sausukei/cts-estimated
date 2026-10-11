@@ -122,3 +122,10 @@ footer a { display: inline-flex; align-items: center; min-height: 44px; margin-r
 .mode-switcher { display: flex; gap: 4px; padding: 4px; margin-bottom: 16px; border-radius: 10px; background: #e5ecef; }
 .mode-link { flex: 1; display: grid; place-items: center; min-height: 44px; border-radius: 7px; text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 700; }
 .mode-link[aria-current="page"] { background: var(--surface); color: var(--accent); box-shadow: 0 1px 3px #192d3810; }
+.board-date { margin: 0 0 16px; }
+.home-intro { margin: 16px 0; color: var(--muted); line-height: 1.9; font-size: 14px; }
+.airport-directory { display: grid; gap: 16px; }
+.airport-directory .mode-switcher { margin: 20px 0 0; }
+.about-arrivals { margin-top: 36px; border-top: 1px solid var(--line); padding-top: 28px; }
+.about-arrivals h3 { margin-top: 24px; font-size: 14px; }
+.about-arrivals p { margin-top: 12px; color: var(--muted); font-size: 13px; line-height: 1.9; }
