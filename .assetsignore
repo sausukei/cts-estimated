@@ -1,0 +1,5 @@
+# Publish only the files used by the site.
+*
+!index.html
+!script.js
+!style.css

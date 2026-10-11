@@ -182,11 +182,11 @@ async function loadFlightData() {
   errorElement.style.display = "none";
   flightListElement.innerHTML = "";
   noFlightsElement.style.display = "none";
+  updateFlightSummary();
 
   try {
     // 全ページのデータを取得
     allFlights = [];
-    const currentTimestamp = Math.floor(Date.now() / 1000);
 
     // 今日の日付を取得（00:00:00から23:59:59まで）
     const today = new Date();
@@ -196,7 +196,8 @@ async function loadFlightData() {
 
     for (let page = 1; page <= totalPages; page++) {
       const apiUrl =
-        `${API_BASE_URL}?code=${AIRPORT_CODE}&plugin[]=schedule&plugin-setting[schedule][mode]=arrivals&plugin-setting[schedule][timestamp]=${currentTimestamp}&limit=100&page=${page}`;
+        // 予定時刻を過ぎた未到着便も取得できるよう、当日0時を基準にする。
+        `${API_BASE_URL}?code=${AIRPORT_CODE}&plugin[]=schedule&plugin-setting[schedule][mode]=arrivals&plugin-setting[schedule][timestamp]=${todayStart}&limit=100&page=${page}`;
 
       console.log(`Fetching page ${page}:`, apiUrl);
 
@@ -223,8 +224,11 @@ async function loadFlightData() {
         // 国際線かつ今日の日付のフライトのみ
         const isInternational = originCode &&
           !DOMESTIC_AIRPORTS.includes(originCode);
-        const isToday = arrivalTime && arrivalTime >= todayStart &&
-          arrivalTime <= todayEnd;
+        // 翌日まで遅延した当日便も、予定日を基準に表示に残す。
+        const isToday = [time.scheduled?.arrival, arrivalTime].some(
+          (timestamp) => timestamp && timestamp >= todayStart &&
+            timestamp <= todayEnd,
+        );
 
         return isInternational && isToday;
       });
@@ -239,6 +243,8 @@ async function loadFlightData() {
 
     // 時間でソート
     sortFlightsByTime();
+    updateFlightSummary(allFlights);
+    displayCurrentDate();
 
     loadingElement.style.display = "none";
     updateLastUpdateTime();
@@ -257,6 +263,25 @@ async function loadFlightData() {
     console.error("Error fetching flight data:", error);
     loadingElement.style.display = "none";
     errorElement.style.display = "block";
+  }
+}
+
+// ページ単位ではなく、取得した当日の国際線全体を集計する。
+// 未取得・取得失敗時は0便と誤認されないよう「—」を表示する。
+function updateFlightSummary(flights = null) {
+  const total = document.getElementById("totalFlights");
+  const remaining = document.getElementById("remainingFlights");
+  if (total) total.textContent = flights ? String(flights.length) : "—";
+  if (remaining) {
+    remaining.textContent = flights
+      ? String(flights.filter((item) => {
+        const flight = item.flight || {};
+        const status = (flight.status?.text || "").toLowerCase();
+        const isFinished = flight.time?.real?.arrival ||
+          /\b(landed|arrived|cancelled|canceled)\b/.test(status);
+        return !isFinished;
+      }).length)
+      : "—";
   }
 }
 
