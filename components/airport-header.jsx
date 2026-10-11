@@ -12,6 +12,9 @@ export default function AirportHeader({ airport, mode }) {
       </details>
       <span><span>{info.english}</span><small>{info.name}</small></span><span className="terminal-label">{MODES[mode]}</span>
     </div>
+    <nav className="airport-tabs" aria-label="表示する空港">
+      {Object.entries(AIRPORTS).map(([key, value]) => <Link prefetch={false} key={key} href={arrivalPath(key, mode)} aria-current={key === airport ? 'page' : undefined}>{value.name.replace('空港', '')}<small>{value.code}</small></Link>)}
+    </nav>
     <div className="heading-row"><div><p className="eyebrow">{mode.toUpperCase()} ARRIVALS</p><h1>{info.name}<br />{MODES[mode]}の到着便</h1></div></div>
     <nav className="mode-switcher" aria-label="路線を選択">
       {Object.entries(MODES).map(([key, label]) => <Link prefetch={false} key={key} className="mode-link" href={arrivalPath(airport, key)} aria-current={key === mode ? 'page' : undefined}>{label}</Link>)}

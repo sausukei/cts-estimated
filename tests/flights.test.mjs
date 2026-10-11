@@ -1,9 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { fetchFlights, isRemaining, delayInfo, arrivalTime } from '../lib/flights.mjs';
+import { fetchFlights, isRemaining, delayInfo, arrivalTime, japanDayRange, matchesFlight, formatTime } from '../lib/flights.mjs';
 import { routes, legacyPath } from '../lib/airports.mjs';
 import worker from '../worker/index.mjs';
-const day = new Date(2026, 0, 3);
+const day = new Date('2026-01-03T00:00:00+09:00');
 const start = day.getTime() / 1000;
 const at = hour => start + hour * 3600;
 const flight = (number, scheduled, estimated, real, origin = 'ICN', status = '') => ({ flight: { identification: { number: { default: number } }, airport: { origin: { code: { iata: origin } } }, status: { text: status }, time: { scheduled: { arrival: scheduled }, estimated: { arrival: estimated }, real: { arrival: real } } } });
@@ -18,7 +18,7 @@ test('delayed arrivals survive refresh after scheduled and estimated times', asy
   const items = [flight('DELAYED', at(18), at(19)), flight('NO_ESTIMATE', at(18))];
   const requests = [];
   for (const hour of [17, 20]) assert.equal((await fetchFlights('CTS', 'international', { now: new Date(at(hour) * 1000), fetcher: api(items, requests) })).length, 2);
-  assert.equal(requests.length, 10);
+  assert.equal(requests.length, 4);
   assert.ok(requests.every(p => Number(p.get('plugin-setting[schedule][timestamp]')) === start));
 });
 test('overnight delays and landed flights remain; domestic and future flights are excluded', async () => {
@@ -63,4 +63,53 @@ test('legacy URLs get same-origin permanent redirects preserving airport and mod
   }
   assert.equal(legacyPath('?airport=__proto__&mode=bogus'), '/cts/international/');
   assert.equal(await (await worker.fetch(new Request('https://example.com/'), { ASSETS: { fetch: () => new Response('home') } })).text(), 'home');
+});
+
+function pagedApi(pages, metadata = true) {
+  return async url => {
+    const page = Number(new URL(url).searchParams.get('page'));
+    return { ok: true, json: async () => ({ result: { response: { airport: { pluginData: { schedule: {
+      arrivals: { data: pages[page - 1] || [], ...(metadata ? { page: { current: page, total: pages.length } } : {}) },
+    } } } } } }) };
+  };
+}
+test('reads beyond five pages and counts duplicate records once', async () => {
+  const pages = Array.from({ length: 6 }, (_, index) => [flight(`FLIGHT${index}`, at(18))]);
+  pages[5].push(pages[0][0]);
+  const result = await fetchFlights('CTS', 'international', { now: day, fetcher: pagedApi(pages) });
+  assert.equal(result.length, 6);
+  assert.ok(result.some(item => item.flight.identification.number.default === 'FLIGHT5'));
+});
+test('deduplicates shared flight IDs but preserves separate operations of the same number', async () => {
+  const first = flight('A', at(18)); first.flight.identification.id = 'same-operation';
+  const alias = flight('B', at(18)); alias.flight.identification.id = 'same-operation';
+  const later = flight('A', at(21));
+  assert.equal((await fetchFlights('CTS', 'international', { now: day, fetcher: pagedApi([[first, alias, later]]) })).length, 2);
+});
+test('destination and scheduled date prevent another airport or yesterday’s late flight entering today’s count', () => {
+  const wrongAirport = flight('A', at(18));
+  wrongAirport.flight.airport.destination = { code: { iata: 'KMQ' } };
+  assert.equal(matchesFlight(wrongAirport, 'international', start, at(24) - 1, 'HND'), false);
+  assert.equal(matchesFlight(flight('YESTERDAY', at(-1), at(1)), 'international', start, at(24) - 1, 'CTS'), false);
+  assert.equal(matchesFlight(flight('OVERNIGHT', at(23), at(25)), 'international', start, at(24) - 1, 'CTS'), true);
+});
+test('Japanese day and displayed time are independent of the viewer timezone', () => {
+  assert.equal(japanDayRange(new Date('2026-01-02T15:00:00Z')).start, start);
+  assert.equal(japanDayRange(new Date('2026-01-03T14:59:59Z')).end, at(24) - 1);
+  assert.equal(formatTime(start), '00:00');
+});
+test('repeated pages and failures after page five never return a misleading partial total', async () => {
+  const same = [flight('A', at(18))];
+  await assert.rejects(fetchFlights('CTS', 'international', { now: day, fetcher: pagedApi([same, same]) }), /Repeated/);
+  const fetcher = pagedApi(Array.from({ length: 6 }, (_, i) => [flight(`A${i}`, at(18))]));
+  await assert.rejects(fetchFlights('CTS', 'international', { now: day, fetcher: url => {
+    if (new URL(url).searchParams.get('page') === '6') throw new Error('network failed');
+    return fetcher(url);
+  } }), /network failed/);
+});
+test('sequential airport queries cannot reuse another airport’s total', async () => {
+  for (const [code, count] of [['CTS', 3], ['HND', 7], ['KMQ', 1], ['CTS', 3]]) {
+    const result = await fetchFlights(code, 'domestic', { now: day, fetcher: api(Array.from({ length: count }, (_, i) => flight(`${code}${i}`, at(18), null, null, 'ITM'))) });
+    assert.equal(result.length, count);
+  }
 });
