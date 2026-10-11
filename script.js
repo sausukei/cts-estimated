@@ -450,6 +450,13 @@ function createFlightCard(flight, currentTimestamp = null) {
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
   })[char]);
   const isDelayed = estimatedTime && scheduledTime && estimatedTime > scheduledTime;
+  const isActiveDelay = !actualTime &&
+    !/landed|arrived|cancelled|canceled|diverted/i.test(statusText) &&
+    (isDelayed || /delayed/i.test(statusText));
+  const delayMinutes = isDelayed
+    ? Math.ceil((estimatedTime - scheduledTime) / 60)
+    : null;
+  if (isActiveDelay) card.classList.add("flight-delayed");
   card.innerHTML = `
     <div class="flight-header">
       <div><h3 class="flight-number">${escape(flightNumber)}</h3><p class="airline-name">${escape(airlineName)}</p></div>
@@ -457,9 +464,10 @@ function createFlightCard(flight, currentTimestamp = null) {
     </div>
     <div class="flight-route"><span class="origin">${escape(originCode)}</span><span class="route-line" aria-label="から">⟶</span><span class="destination">CTS</span></div>
     <p class="origin-name">${escape(originName)} 発</p>
+    ${isActiveDelay ? `<p class="delay-notice">遅延${delayMinutes ? ` · 予定より${delayMinutes}分遅れの見込み` : " · 到着情報をご確認ください"}</p>` : ""}
     <div class="time-section">
-      <div class="time-item"><div class="time-label">到着予定</div><div class="time-value">${scheduledTime ? formatTime(scheduledTime) : "—"}</div></div>
-      <div class="time-item"><div class="time-label">到着見込み</div><div class="time-value time-estimated ${!actualTime && isDelayed ? "time-delayed" : ""}">${estimatedTime ? formatTime(estimatedTime) : "—"}</div></div>
+      <div class="time-item"><div class="time-label">到着予定</div><div class="time-value time-scheduled">${scheduledTime ? formatTime(scheduledTime) : "—"}</div></div>
+      <div class="time-item"><div class="time-label">到着見込み</div><div class="time-value time-estimated ${isActiveDelay ? "time-delayed" : ""}">${estimatedTime ? formatTime(estimatedTime) : "—"}</div></div>
       <div class="time-item"><div class="time-label">実際の到着</div><div class="time-value time-actual">${actualTime ? formatTime(actualTime) : "—"}</div></div>
     </div>
     <div class="aircraft-info"><span>機種 ${escape(aircraftModel)}</span><span>登録 ${escape(aircraftReg)}</span></div>
