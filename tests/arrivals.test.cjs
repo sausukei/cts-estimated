@@ -132,3 +132,17 @@ for (const [query, code] of [
     assert.equal(app.elements.get('totalFlights').textContent, '1');
   });
 }
+
+for (const airport of ['CTS', 'HND', 'KMQ']) {
+  test(`${airport} domestic mode counts domestic flights including overdue arrivals`, async () => {
+    const app = setup([
+      flight('DOMESTIC', at(18), at(19), undefined, 'ITM'),
+      flight('LANDED', at(17), undefined, at(18), 'FUK'),
+      flight('INTERNATIONAL', at(18)),
+      flight('UNKNOWN', at(18), undefined, undefined, ''),
+    ], `?airport=${airport}&mode=domestic`);
+    assert.deepEqual(await app.load(20), ['LANDED', 'DOMESTIC']);
+    assert.equal(app.elements.get('totalFlights').textContent, '2');
+    assert.equal(app.elements.get('remainingFlights').textContent, '1');
+  });
+}

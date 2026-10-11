@@ -5,21 +5,35 @@ const AIRPORTS = {
   HND: { name: "羽田空港", english: "HANEDA AIRPORT" },
   KMQ: { name: "小松空港", english: "KOMATSU AIRPORT" },
 };
-const requestedAirport = new URLSearchParams(window.location.search)
-  .get("airport")?.toUpperCase();
+const query = new URLSearchParams(window.location.search);
+const requestedAirport = query.get("airport")?.toUpperCase();
+const FLIGHT_MODE = query.get("mode") === "domestic" ? "domestic" : "international";
+const MODE_LABEL = FLIGHT_MODE === "domestic" ? "国内線" : "国際線";
 const AIRPORT_CODE = Object.hasOwn(AIRPORTS, requestedAirport)
   ? requestedAirport : "CTS";
 
 function displayAirport() {
   const airport = AIRPORTS[AIRPORT_CODE];
-  document.title = `${airport.name} 国際線到着便情報`;
+  document.title = `${airport.name} ${MODE_LABEL}到着便情報`;
   document.getElementById("airportCode").textContent = AIRPORT_CODE;
   document.getElementById("airportEnglish").textContent = airport.english;
   document.getElementById("airportName").textContent = airport.name;
   document.getElementById("footerAirport").textContent = AIRPORT_CODE;
   document.querySelector('meta[name="description"]').content =
-    `${airport.name}の国際線到着便。到着時刻、運航状況、本日の残り便数を確認できます。`;
+    `${airport.name}の${MODE_LABEL}到着便。到着時刻、運航状況、本日の残り便数を確認できます。`;
+  document.getElementById("modeLabel").textContent = MODE_LABEL;
+  document.getElementById("summaryMode").textContent = `${MODE_LABEL}の到着便`;
+  document.getElementById("emptyMode").textContent = `本日の${MODE_LABEL}到着便が見つかりませんでした。`;
+  document.querySelectorAll(".arrivals-label").forEach((element) => {
+    element.textContent = `${FLIGHT_MODE.toUpperCase()} ARRIVALS`;
+  });
+  document.querySelectorAll(".mode-link").forEach((link) => {
+    link.href = `?airport=${AIRPORT_CODE}&mode=${link.dataset.mode}`;
+    if (link.dataset.mode === FLIGHT_MODE) link.setAttribute("aria-current", "page");
+    else link.removeAttribute("aria-current");
+  });
   document.querySelectorAll(".airport-link").forEach((link) => {
+    link.href = `?airport=${link.dataset.airport}&mode=${FLIGHT_MODE}`;
     if (link.dataset.airport === AIRPORT_CODE) {
       link.setAttribute("aria-current", "page");
     } else {
@@ -239,8 +253,8 @@ async function loadFlightData() {
         data.result?.response?.airport?.pluginData?.schedule?.arrivals?.data ||
         [];
 
-      // 国際線かつ今日のフライトのみフィルタリング
-      const internationalFlights = arrivals.filter((flight) => {
+      // 選択したモードかつ今日のフライトのみフィルタリング
+      const matchingFlights = arrivals.filter((flight) => {
         const originCode = flight.flight?.airport?.origin?.code?.iata;
         const time = flight.flight?.time || {};
 
@@ -248,25 +262,26 @@ async function loadFlightData() {
         const arrivalTime = time.real?.arrival || time.estimated?.arrival ||
           time.scheduled?.arrival;
 
-        // 国際線かつ今日の日付のフライトのみ
-        const isInternational = originCode &&
-          !DOMESTIC_AIRPORTS.includes(originCode);
+        // 出発地によって国内線・国際線を判定する
+        const matchesMode = originCode && (FLIGHT_MODE === "domestic"
+          ? DOMESTIC_AIRPORTS.includes(originCode)
+          : !DOMESTIC_AIRPORTS.includes(originCode));
         // 翌日まで遅延した当日便も、予定日を基準に表示に残す。
         const isToday = [time.scheduled?.arrival, arrivalTime].some(
           (timestamp) => timestamp && timestamp >= todayStart &&
             timestamp <= todayEnd,
         );
 
-        return isInternational && isToday;
+        return matchesMode && isToday;
       });
 
-      allFlights = allFlights.concat(internationalFlights);
+      allFlights = allFlights.concat(matchingFlights);
       console.log(
-        `Page ${page}: ${internationalFlights.length} international flights (today only)`,
+        `Page ${page}: ${matchingFlights.length} ${FLIGHT_MODE} flights (today only)`,
       );
     }
 
-    console.log(`Total international flights (today): ${allFlights.length}`);
+    console.log(`Total ${FLIGHT_MODE} flights (today): ${allFlights.length}`);
 
     // 時間でソート
     sortFlightsByTime();
@@ -293,7 +308,7 @@ async function loadFlightData() {
   }
 }
 
-// ページ単位ではなく、取得した当日の国際線全体を集計する。
+// ページ単位ではなく、取得した当日の選択モード全体を集計する。
 // 未取得・取得失敗時は0便と誤認されないよう「—」を表示する。
 function updateFlightSummary(flights = null) {
   const total = document.getElementById("totalFlights");
