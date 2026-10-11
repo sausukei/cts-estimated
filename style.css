@@ -24,6 +24,17 @@ h1, h2, h3, p { margin: 0; }
 .brand small { display: block; margin-top: 4px; font-size: 12px; font-weight: 500; letter-spacing: .06em; }
 .airport-mark { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 13px; background: var(--ink); color: white; font-size: 16px; letter-spacing: -.04em; }
 .terminal-label { margin-left: auto; padding: 6px 10px; border: 1px solid #cbd6dc; border-radius: 6px; font-size: 11px; white-space: nowrap; }
+.airport-picker { position: relative; flex-shrink: 0; }
+.airport-picker summary { cursor: pointer; list-style: none; position: relative; height: 52px; padding-bottom: 8px; }
+.airport-picker summary::-webkit-details-marker { display: none; }
+.airport-picker summary:focus-visible { outline: 3px solid #177fa4; outline-offset: 4px; }
+.picker-chevron { position: absolute; bottom: 3px; font-size: 12px; line-height: 1; }
+.airport-picker[open] .picker-chevron { transform: rotate(180deg); }
+.airport-switcher { position: absolute; top: calc(100% + 8px); left: 0; z-index: 5; width: 220px; padding: 6px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 0 8px 24px #192d381a; }
+.airport-link { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 12px; border-radius: 8px; color: var(--ink); font-size: 13px; font-weight: 650; text-decoration: none; }
+.airport-link span { font-size: 11px; color: var(--muted); }
+.airport-link[aria-current="page"] { background: #e8f3ee; color: var(--accent); }
+.airport-link:hover { background: #edf2f4; }
 .heading-row { margin: 32px 0 22px; }
 .eyebrow { color: var(--accent); font-size: 10px; font-weight: 750; letter-spacing: .15em; margin-bottom: 9px; }
 h1 { font-size: clamp(25px, 5vw, 36px); letter-spacing: -.04em; line-height: 1.4; }

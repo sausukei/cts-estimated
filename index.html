@@ -12,7 +12,17 @@
     <a class="skip-link" href="#arrivals">到着便一覧へ</a>
     <div class="container">
         <header class="site-header">
-            <div class="brand"><span class="airport-mark" aria-hidden="true">CTS</span><span>NEW CHITOSE AIRPORT<small>新千歳空港</small></span><span class="terminal-label">国際線</span></div>
+            <div class="brand">
+                <details class="airport-picker">
+                    <summary class="airport-mark" aria-label="空港を切り替える"><span id="airportCode">CTS</span><span class="picker-chevron" aria-hidden="true">⌄</span></summary>
+                    <nav class="airport-switcher" aria-label="空港を選択">
+                        <a class="airport-link" href="?airport=CTS" data-airport="CTS" aria-current="page">新千歳空港 <span>CTS</span></a>
+                        <a class="airport-link" href="?airport=HND" data-airport="HND">羽田空港 <span>HND</span></a>
+                        <a class="airport-link" href="?airport=KMQ" data-airport="KMQ">小松空港 <span>KMQ</span></a>
+                    </nav>
+                </details>
+                <span><span id="airportEnglish">NEW CHITOSE AIRPORT</span><small id="airportName">新千歳空港</small></span><span class="terminal-label">国際線</span>
+            </div>
             <div class="heading-row"><div><p class="eyebrow">INTERNATIONAL ARRIVALS</p><h1>到着便を、ひと目で。</h1></div><p id="currentDate" class="current-date"></p></div>
             <div class="flight-summary" aria-live="polite">
                 <div class="summary-total"><span>本日の総便数</span><strong><span id="totalFlights">—</span><small>便</small></strong><span class="summary-caption">国際線の到着便</span></div>
@@ -34,7 +44,7 @@
             <div id="noFlights" class="empty-state no-flights" role="status" style="display: none;"><h3>表示できる到着便はありません</h3><p>本日の国際線到着便が見つかりませんでした。</p></div>
             <nav id="pagination" class="pagination" aria-label="到着便のページ切り替え"><button id="prevBtn" class="button" type="button" disabled>← 前へ</button><span id="pageInfo" class="page-info" aria-live="polite">1 / 1</span><button id="nextBtn" class="button" type="button" disabled>次へ →</button></nav>
         </main>
-        <footer><span>CTS <span aria-hidden="true">/</span> INTERNATIONAL ARRIVALS</span><p>時刻は閲覧端末のタイムゾーンで表示されます。</p><a href="https://www.flightradar24.com/">Data by Flightradar24 ↗</a><a href="https://github.com/sausukei/cts-estimated">GitHub ↗</a></footer>
+        <footer><span><span id="footerAirport">CTS</span> <span aria-hidden="true">/</span> INTERNATIONAL ARRIVALS</span><p>時刻は閲覧端末のタイムゾーンで表示されます。</p><a href="https://www.flightradar24.com/">Data by Flightradar24 ↗</a><a href="https://github.com/sausukei/cts-estimated">GitHub ↗</a></footer>
     </div>
     <script src="script.js"></script>
 </body>

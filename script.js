@@ -1,6 +1,32 @@
 // APIエンドポイント設定
 const API_BASE_URL = "https://api.flightradar24.com/common/v1/airport.json";
-const AIRPORT_CODE = "CTS";
+const AIRPORTS = {
+  CTS: { name: "新千歳空港", english: "NEW CHITOSE AIRPORT" },
+  HND: { name: "羽田空港", english: "HANEDA AIRPORT" },
+  KMQ: { name: "小松空港", english: "KOMATSU AIRPORT" },
+};
+const requestedAirport = new URLSearchParams(window.location.search)
+  .get("airport")?.toUpperCase();
+const AIRPORT_CODE = Object.hasOwn(AIRPORTS, requestedAirport)
+  ? requestedAirport : "CTS";
+
+function displayAirport() {
+  const airport = AIRPORTS[AIRPORT_CODE];
+  document.title = `${airport.name} 国際線到着便情報`;
+  document.getElementById("airportCode").textContent = AIRPORT_CODE;
+  document.getElementById("airportEnglish").textContent = airport.english;
+  document.getElementById("airportName").textContent = airport.name;
+  document.getElementById("footerAirport").textContent = AIRPORT_CODE;
+  document.querySelector('meta[name="description"]').content =
+    `${airport.name}の国際線到着便。到着時刻、運航状況、本日の残り便数を確認できます。`;
+  document.querySelectorAll(".airport-link").forEach((link) => {
+    if (link.dataset.airport === AIRPORT_CODE) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+}
 
 // ページネーション設定
 let currentPage = 1;
@@ -114,6 +140,7 @@ const DOMESTIC_AIRPORTS = [
 
 // ページロード時に実行
 document.addEventListener("DOMContentLoaded", () => {
+  displayAirport();
   // 今日の日付を表示
   displayCurrentDate();
   loadFlightData();
@@ -462,7 +489,7 @@ function createFlightCard(flight, currentTimestamp = null) {
       <div><h3 class="flight-number">${escape(flightNumber)}</h3><p class="airline-name">${escape(airlineName)}</p></div>
       <span class="status-badge ${statusClass}">${escape(statusText)}</span>
     </div>
-    <div class="flight-route"><span class="origin">${escape(originCode)}</span><span class="route-line" aria-label="から">⟶</span><span class="destination">CTS</span></div>
+    <div class="flight-route"><span class="origin">${escape(originCode)}</span><span class="route-line" aria-label="から">⟶</span><span class="destination">${AIRPORT_CODE}</span></div>
     <p class="origin-name">${escape(originName)} 発</p>
     ${isActiveDelay ? `<p class="delay-notice">遅延${delayMinutes ? ` · 予定より${delayMinutes}分遅れの見込み` : " · 到着情報をご確認ください"}</p>` : ""}
     <div class="time-section">

@@ -1,8 +1,16 @@
-# 新千歳空港 国際線到着便情報
+# 新千歳・羽田・小松空港 国際線到着便情報
 
-新千歳空港（CTS）の当日の国際線到着便を確認できる、HTML・CSS・JavaScript製のWebページです。
+新千歳空港（CTS）・羽田空港（HND）・小松空港（KMQ）の当日の国際線到着便を確認できる、HTML・CSS・JavaScript製のWebページです。
 
 **[公開サイトを開く](https://cts-estimated.ikenosousuke.workers.dev/)**
+
+ヘッダー左の空港コードのアイコンをタップすると、空港を切り替えられます。各空港のURLをブックマークして直接開くこともできます。
+
+- [新千歳空港（CTS）](https://cts-estimated.ikenosousuke.workers.dev/?airport=CTS)
+- [羽田空港（HND）](https://cts-estimated.ikenosousuke.workers.dev/?airport=HND)
+- [小松空港（KMQ）](https://cts-estimated.ikenosousuke.workers.dev/?airport=KMQ)
+
+空港を指定しない場合や未対応のコードを指定した場合は、新千歳空港を表示します。いずれも国際線到着便が対象です。
 
 ## 表示できる情報
 

@@ -20,11 +20,13 @@ function flight(number, scheduled, estimated, real, origin = 'ICN') {
   } };
 }
 
-function setup(flights) {
+function setup(flights, search = '') {
   let now = at(17);
   const elements = new Map();
   const requests = [];
   const context = vm.createContext({
+    URLSearchParams,
+    window: { location: { search } },
     Date: class extends Date {
       constructor(...args) { super(...(args.length ? args : [now * 1000])); }
       static now() { return now * 1000; }
@@ -59,6 +61,7 @@ function setup(flights) {
   return {
     requests,
     elements,
+    card(item) { context.item = item; return vm.runInContext('createFlightCard(item).innerHTML', context); },
     async load(hour) {
       now = at(hour);
       await vm.runInContext('loadFlightData()', context);
@@ -115,3 +118,17 @@ test('keeps today’s overnight delays and landed flights while excluding domest
   ]);
   assert.deepEqual(await app.load(20), ['LANDED', 'OVERNIGHT']);
 });
+
+for (const [query, code] of [
+  ['', 'CTS'], ['?airport=HND', 'HND'], ['?airport=KMQ', 'KMQ'],
+  ['?airport=hnd', 'HND'], ['?airport=UNKNOWN', 'CTS'],
+]) {
+  test(`airport URL ${query || '(default)'} fetches and displays ${code}`, async () => {
+    const item = flight('TEST123', at(18));
+    const app = setup([item], query);
+    await app.load(20);
+    assert.ok(app.requests.every(params => params.get('code') === code));
+    assert.ok(app.card(item).includes(`<span class="destination">${code}</span>`));
+    assert.equal(app.elements.get('totalFlights').textContent, '1');
+  });
+}
