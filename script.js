@@ -166,7 +166,7 @@ function displayCurrentDate() {
 
   const dateElement = document.getElementById("currentDate");
   if (dateElement) {
-    dateElement.textContent = `📅 ${dateString}`;
+    dateElement.textContent = dateString;
   }
 }
 
@@ -312,9 +312,9 @@ function updateSortButtonText() {
   const sortBtn = document.getElementById("sortBtn");
   if (sortBtn) {
     if (sortOrder === "asc") {
-      sortBtn.innerHTML = "🕐 時間順 (早→遅)";
+      sortBtn.innerHTML = "時間順 ↑";
     } else {
-      sortBtn.innerHTML = "🕐 時間順 (遅→早)";
+      sortBtn.innerHTML = "時間順 ↓";
     }
   }
 }
@@ -446,73 +446,24 @@ function createFlightCard(flight, currentTimestamp = null) {
   const aircraftModel = aircraft.model?.text || "N/A";
   const aircraftReg = aircraft.registration || "N/A";
 
+  const escape = (value) => String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  })[char]);
+  const isDelayed = estimatedTime && scheduledTime && estimatedTime > scheduledTime;
   card.innerHTML = `
-
-     <div class="time-section">
-            ${
-    scheduledTime
-      ? `
-                <div class="time-item">
-                    <div class="time-label">⏰ 予定時刻</div>
-                    <div class="time-value">${formatTime(scheduledTime)}</div>
-                </div>
-            `
-      : ""
-  }
-            
-            ${
-    estimatedTime
-      ? `
-                <div class="time-item">
-                    <div class="time-label">📊 推定時刻</div>
-                    <div class="time-value time-estimated ${
-        actualTime ? "" : "time-delayed"
-      }">${formatTime(estimatedTime)}</div>
-                </div>
-            `
-      : ""
-  }
-            
-            ${
-    actualTime
-      ? `
-                <div class="time-item">
-                    <div class="time-label">✅ 実際の到着時刻</div>
-                    <div class="time-value time-actual">${
-        formatTime(actualTime)
-      }</div>
-                </div>
-            `
-      : ""
-  }
-        </div>
-        <div class="flight-header">
-            <div>
-                <div class="flight-number">${flightNumber}</div>
-                <div style="color: #666; font-size: 0.9em; margin-top: 5px;">${airlineName}</div>
-            </div>
-            <div class="status-badge ${statusClass}">${statusText}</div>
-        </div>
-        
-        <div class="flight-route">
-            <div class="origin">${originCode}</div>
-            <div class="arrow">✈️</div>
-            <div class="destination">CTS</div>
-        </div>
-        
-        <div class="flight-details">
-            <div class="detail-item">
-                <div class="detail-label">出発地</div>
-                <div class="detail-value">${originName}</div>
-            </div>
-        </div>
-        
-       
-        
-        <div class="aircraft-info">
-            ✈️ 機体: ${aircraftModel} | 登録番号: ${aircraftReg}
-        </div>
-    `;
+    <div class="flight-header">
+      <div><h3 class="flight-number">${escape(flightNumber)}</h3><p class="airline-name">${escape(airlineName)}</p></div>
+      <span class="status-badge ${statusClass}">${escape(statusText)}</span>
+    </div>
+    <div class="flight-route"><span class="origin">${escape(originCode)}</span><span class="route-line" aria-label="から">⟶</span><span class="destination">CTS</span></div>
+    <p class="origin-name">${escape(originName)} 発</p>
+    <div class="time-section">
+      <div class="time-item"><div class="time-label">到着予定</div><div class="time-value">${scheduledTime ? formatTime(scheduledTime) : "—"}</div></div>
+      <div class="time-item"><div class="time-label">到着見込み</div><div class="time-value time-estimated ${!actualTime && isDelayed ? "time-delayed" : ""}">${estimatedTime ? formatTime(estimatedTime) : "—"}</div></div>
+      <div class="time-item"><div class="time-label">実際の到着</div><div class="time-value time-actual">${actualTime ? formatTime(actualTime) : "—"}</div></div>
+    </div>
+    <div class="aircraft-info"><span>機種 ${escape(aircraftModel)}</span><span>登録 ${escape(aircraftReg)}</span></div>
+  `;
 
   return card;
 }
@@ -523,6 +474,8 @@ function getStatusClass(statusText) {
 
   if (status.includes("landed") || status.includes("arrived")) {
     return "status-landed";
+  } else if (status.includes("cancelled") || status.includes("canceled")) {
+    return "status-cancelled";
   } else if (status.includes("delayed") || status.includes("diverted")) {
     return "status-delayed";
   } else if (status.includes("en route") || status.includes("airborne")) {

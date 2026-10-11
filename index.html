@@ -1,62 +1,41 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f6f8">
+    <meta name="description" content="新千歳空港の国際線到着便。到着時刻、運航状況、本日の残り便数を確認できます。">
     <title>新千歳空港 国際線到着便情報</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+    <a class="skip-link" href="#arrivals">到着便一覧へ</a>
     <div class="container">
-        <header>
-            <h1>🛬 新千歳空港 (CTS)</h1>
-            <h2>国際線フライト情報</h2>
-            <div id="currentDate" class="current-date"></div>
+        <header class="site-header">
+            <div class="brand"><span class="airport-mark" aria-hidden="true">CTS</span><span>NEW CHITOSE AIRPORT<small>新千歳空港</small></span><span class="terminal-label">国際線</span></div>
+            <div class="heading-row"><div><p class="eyebrow">INTERNATIONAL ARRIVALS</p><h1>到着便を、ひと目で。</h1></div><p id="currentDate" class="current-date"></p></div>
             <div class="flight-summary" aria-live="polite">
-                <div>本日の総便数<strong><span id="totalFlights">—</span> 便</strong></div>
-                <div>本日の残り<strong><span id="remainingFlights">—</span> 便</strong></div>
+                <div class="summary-total"><span>本日の総便数</span><strong><span id="totalFlights">—</span><small>便</small></strong><span class="summary-caption">国際線の到着便</span></div>
+                <div class="summary-remaining"><span><i class="status-dot" aria-hidden="true"></i>本日の残り</span><strong><span id="remainingFlights">—</span><small>便</small></strong><span class="summary-caption">到着待ち・遅延便を含む</span></div>
             </div>
-            <p class="flight-summary-note">国際線到着便のみ。残りは遅延便を含み、到着済み・欠航便を除きます。</p>
-            <div class="update-time">
-                <span id="lastUpdate">データ取得中...</span>
-                <button id="refreshBtn" class="refresh-btn">🔄 更新</button>
-            </div>
+            <p class="flight-summary-note">残り便数は、到着済み・欠航便を除いています。</p>
         </header>
-        <div id="pagination" class="pagination">
-            <button id="prevBtn" class="pagination-btn">前へ</button>
-            <span id="pageInfo" class="page-info"></span>
-            <button id="nextBtn" class="pagination-btn">次へ</button>
-        </div>
-        <div class="controls">
-            <button id="refreshBtn" class="refresh-btn">🔄 更新</button>
-            <button id="currentTimeBtn" class="refresh-btn">📍 現在時刻</button>
-            <div id="lastUpdate" class="last-update">最終更新: 未取得</div>
-        </div>
-
-
-
-        <div id="loading" class="loading">
-            <div class="spinner"></div>
-            <p>フライト情報を読み込んでいます...</p>
-        </div>
-
-        <div id="error" class="error" style="display: none;">
-            <p>⚠️ データの取得に失敗しました</p>
-            <button onclick="loadFlightData()">再試行</button>
-        </div>
-
-        <div id="pagination" class="pagination" style="display: none;"></div>
-
-        <div id="flightList" class="flight-list"></div>
-
-        <div id="noFlights" class="no-flights" style="display: none;">
-            <p>📭 現在、表示可能な国際線到着便はありません</p>
-        </div>
+        <main id="arrivals" tabindex="-1">
+            <div class="list-heading"><h2>到着便一覧</h2><span class="auto-update">5分ごとに自動更新</span></div>
+            <div class="controls">
+                <button id="currentTimeBtn" class="button button-primary" type="button">現在時刻の便へ <span aria-hidden="true">↗</span></button>
+                <button id="sortBtn" class="button" type="button">時間順 ↑</button>
+                <button id="refreshBtn" class="button refresh-btn" type="button"><span aria-hidden="true">↻</span> 更新</button>
+            </div>
+            <p id="lastUpdate" class="last-update" aria-live="polite">最終更新: 未取得</p>
+            <div id="loading" class="empty-state loading" role="status"><div class="spinner" aria-hidden="true"></div><h3>到着便を確認しています</h3><p>最新のフライト情報を取得中です。</p></div>
+            <div id="error" class="empty-state error" role="alert" style="display: none;"><h3>データを取得できませんでした</h3><p>通信状況をご確認のうえ、もう一度お試しください。</p><button class="button" type="button" onclick="loadFlightData()">もう一度読み込む</button></div>
+            <div id="flightList" class="flight-list"></div>
+            <div id="noFlights" class="empty-state no-flights" role="status" style="display: none;"><h3>表示できる到着便はありません</h3><p>本日の国際線到着便が見つかりませんでした。</p></div>
+            <nav id="pagination" class="pagination" aria-label="到着便のページ切り替え"><button id="prevBtn" class="button" type="button" disabled>← 前へ</button><span id="pageInfo" class="page-info" aria-live="polite">1 / 1</span><button id="nextBtn" class="button" type="button" disabled>次へ →</button></nav>
+        </main>
+        <footer><span>CTS <span aria-hidden="true">/</span> INTERNATIONAL ARRIVALS</span><p>時刻は閲覧端末のタイムゾーンで表示されます。</p><a href="https://www.flightradar24.com/">Data by Flightradar24 ↗</a><a href="https://github.com/sausukei/cts-estimated">GitHub ↗</a></footer>
     </div>
-
     <script src="script.js"></script>
 </body>
-
 </html>
