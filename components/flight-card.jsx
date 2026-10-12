@@ -16,6 +16,7 @@ export default function FlightCard({ item, code, now, highlighted, cardRef }) {
       <div className="time-item"><div className="time-label">到着見込み</div><div className={`time-value time-estimated ${delay.active ? 'time-delayed' : ''}`}>{formatTime(time.estimated?.arrival)}</div></div>
       <div className="time-item"><div className="time-label">実際の到着</div><div className="time-value time-actual">{formatTime(time.real?.arrival)}</div></div>
     </div>
+    {item.turnaround && <div className="turnaround-gate"><span>折り返し便の搭乗口 <strong>{item.turnaround.gate}</strong></span><small>{item.turnaround.flight} · <a href="https://www.hokkaido-airports.com/ja/new-chitose/airport/fis/?purposeType=departure" target="_blank" rel="noreferrer">空港公式</a> {formatTime(Date.parse(item.turnaround.updated) / 1000)}更新</small></div>}
     <div className="aircraft-info"><span>機種 {flight.aircraft?.model?.text || 'N/A'}</span><span>登録 {flight.aircraft?.registration || 'N/A'}</span></div>
   </article>;
 }

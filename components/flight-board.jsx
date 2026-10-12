@@ -4,6 +4,7 @@ import { AIRPORTS, MODES } from '../lib/airports.mjs';
 import { fetchFlights, arrivalTime, isRemaining, JAPAN_TIME_ZONE } from '../lib/flights.mjs';
 import FlightCard from './flight-card';
 import { trackEvent } from '../lib/analytics.mjs';
+import { enrichTurnarounds } from '../lib/turnaround.mjs';
 
 export default function FlightBoard({ airport, mode }) {
   const [flights, setFlights] = useState(null);
@@ -26,6 +27,14 @@ export default function FlightBoard({ airport, mode }) {
       const data = await fetchFlights(AIRPORTS[airport].code, mode, { signal: controller.signal });
       if (abortRef.current !== controller || controller.signal.aborted) return null;
       setFlights(data); setUpdated(Date.now());
+      if (airport === 'cts') {
+        const gateTimeout = setTimeout(() => controller.abort(), 30000);
+        enrichTurnarounds(data, { signal: controller.signal }).then(enriched => {
+          if (abortRef.current === controller && !controller.signal.aborted) setFlights(enriched);
+        }).catch(() => {
+          // Optional gate data must not prevent arrival information from displaying.
+        }).finally(() => clearTimeout(gateTimeout));
+      }
       trackEvent('flight_load_success', { airport, mode, flight_count: data.length, remaining_count: data.filter(isRemaining).length });
       setPage(value => Math.min(value, Math.max(1, Math.ceil(data.length / 20))));
       return data;

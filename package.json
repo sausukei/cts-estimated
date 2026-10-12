@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "test": "node --test tests/flights.test.mjs",
+    "test": "node --test tests/flights.test.mjs tests/turnaround.test.mjs",
     "test:seo": "node --test tests/seo.test.mjs",
     "preview": "wrangler dev"
   },
