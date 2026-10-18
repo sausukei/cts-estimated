@@ -105,3 +105,4 @@ GA4の拡張計測で「ページビュー」と「ブラウザの履歴イベ�
 公式データはWorkerの `/api/cts-gates` から取得し、120秒キャッシュします。30分以上更新されていないデータは使用しません。追加取得の失敗時も到着便一覧は表示します。機体記号や搭乗口の事前公開状況に依存するため、朝の時点で表示できる保証はありません。実データの照合は取得元の403により未検証です。ローカルの統合確認には `npm run preview` を使用してください。
 
 公開ドメインは `flight.sausukei.com` です。WranglerのCustom Domain設定でDNSとHTTPS証明書を管理します。GA4のWebストリームURLも `https://flight.sausukei.com` に揃えてください（測定IDは継続）。
+旧 `cts-estimated.ikenosousuke.workers.dev` は、全パス・クエリを維持して `flight.sausukei.com` へ301転送します。静的ファイルにも転送を適用するため、Workerを全リクエストで先に実行します。

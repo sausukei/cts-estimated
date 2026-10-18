@@ -1,7 +1,13 @@
-import { legacyPath } from '../lib/airports.mjs';
+import { legacyPath, SITE_URL } from '../lib/airports.mjs';
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.hostname === 'cts-estimated.ikenosousuke.workers.dev') {
+      const destination = new URL(SITE_URL);
+      destination.pathname = url.pathname;
+      destination.search = url.search;
+      return Response.redirect(destination, 301);
+    }
     if (url.pathname === '/api/cts-gates') {
       if (request.method !== 'GET') return new Response(null, { status: 405 });
       try {

@@ -113,3 +113,17 @@ test('sequential airport queries cannot reuse another airport’s total', async 
     assert.equal(result.length, count);
   }
 });
+
+test('old production hostname redirects all paths and queries without redirecting the new domain', async () => {
+  const worker = (await import('../worker/index.mjs')).default;
+  for (const path of ['/', '/hnd/domestic/?utm_source=bookmark', '/?airport=KMQ&mode=domestic', '/_next/static/test.js', '/api/cts-gates']) {
+    const response = await worker.fetch(new Request(`https://cts-estimated.ikenosousuke.workers.dev${path}`), {});
+    assert.equal(response.status, 301);
+    assert.equal(response.headers.get('Location'), `https://flight.sausukei.com${path}`);
+  }
+  const response = await worker.fetch(new Request('https://flight.sausukei.com/cts/international/'), {
+    ASSETS: { fetch: () => new Response('site') },
+  });
+  assert.equal(response.status, 200);
+  assert.equal(await response.text(), 'site');
+});
