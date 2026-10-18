@@ -2,13 +2,13 @@
 
 新千歳（CTS）・羽田（HND）・小松（KMQ）の国内線・国際線到着便を確認できる、Next.js / React製のWebアプリです。
 
-**[公開サイト](https://cts-estimated.ikenosousuke.workers.dev/)**
+**[公開サイト](https://flight.sausukei.com/)**
 
 | 空港 | 国際線 | 国内線 |
 | --- | --- | --- |
-| 新千歳 | [国際線到着便](https://cts-estimated.ikenosousuke.workers.dev/cts/international/) | [国内線到着便](https://cts-estimated.ikenosousuke.workers.dev/cts/domestic/) |
-| 羽田 | [国際線到着便](https://cts-estimated.ikenosousuke.workers.dev/hnd/international/) | [国内線到着便](https://cts-estimated.ikenosousuke.workers.dev/hnd/domestic/) |
-| 小松 | [国際線到着便](https://cts-estimated.ikenosousuke.workers.dev/kmq/international/) | [国内線到着便](https://cts-estimated.ikenosousuke.workers.dev/kmq/domestic/) |
+| 新千歳 | [国際線到着便](https://flight.sausukei.com/cts/international/) | [国内線到着便](https://flight.sausukei.com/cts/domestic/) |
+| 羽田 | [国際線到着便](https://flight.sausukei.com/hnd/international/) | [国内線到着便](https://flight.sausukei.com/hnd/domestic/) |
+| 小松 | [国際線到着便](https://flight.sausukei.com/kmq/international/) | [国内線到着便](https://flight.sausukei.com/kmq/domestic/) |
 
 ヘッダーの空港タブまたは左の空港アイコンで空港、国内線／国際線のボタンで路線を切り替えられます。空港変更時にも路線モードを維持します。旧URL（例：`/?airport=HND&mode=domestic`）はCloudflare上で新しいURLへ308リダイレクトします。
 
@@ -103,3 +103,5 @@ GA4の拡張計測で「ページビュー」と「ブラウザの履歴イベ�
 新千歳のみ、到着便表示後に出発便の機体記号と空港公式の搭乗口を追加取得します。同一機体の到着後12時間以内の最初の出発便を候補にし、公式データの便名・予定出発日時・行き先が一意に一致した場合だけ表示します。番号がない便には補足ラベルを表示しません。これは折り返し出発便の搭乗口であり、到着時の駐機位置を保証するものではありません。
 
 公式データはWorkerの `/api/cts-gates` から取得し、120秒キャッシュします。30分以上更新されていないデータは使用しません。追加取得の失敗時も到着便一覧は表示します。機体記号や搭乗口の事前公開状況に依存するため、朝の時点で表示できる保証はありません。実データの照合は取得元の403により未検証です。ローカルの統合確認には `npm run preview` を使用してください。
+
+公開ドメインは `flight.sausukei.com` です。WranglerのCustom Domain設定でDNSとHTTPS証明書を管理します。GA4のWebストリームURLも `https://flight.sausukei.com` に揃えてください（測定IDは継続）。

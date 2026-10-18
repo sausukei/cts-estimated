@@ -1,5 +1,8 @@
 {
   "name": "cts-estimated",
+  "account_id": "50a41ab29c0b0393fb23c8d9f1c7b121",
+  "workers_dev": true,
+  "routes": [{ "pattern": "flight.sausukei.com", "custom_domain": true }],
   "main": "worker/index.mjs",
   "compatibility_date": "2026-10-06",
   "build": { "command": "npm run build" },
