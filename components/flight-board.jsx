@@ -6,6 +6,15 @@ import FlightCard from './flight-card';
 import { trackEvent } from '../lib/analytics.mjs';
 import { enrichTurnarounds } from '../lib/turnaround.mjs';
 
+function nearestFlightIndex(ordered) {
+  const now = Date.now() / 1000;
+  let index = 0;
+  ordered.forEach((item, i) => {
+    if (Math.abs(arrivalTime(item) - now) < Math.abs(arrivalTime(ordered[index]) - now)) index = i;
+  });
+  return index;
+}
+
 export default function FlightBoard({ airport, mode }) {
   const [flights, setFlights] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,6 +26,7 @@ export default function FlightBoard({ airport, mode }) {
   const [target, setTarget] = useState(null);
   const abortRef = useRef(null);
   const highlightRef = useRef(null);
+  const initialJumpDone = useRef(false);
   const load = useCallback(async () => {
     abortRef.current?.abort();
     const controller = new AbortController();
@@ -57,6 +67,14 @@ export default function FlightBoard({ airport, mode }) {
   const sorted = useMemo(() => [...(flights || [])].sort((a, b) =>
     (arrivalTime(a) - arrivalTime(b)) * (descending ? -1 : 1)), [flights, descending]);
   useEffect(() => {
+    if (initialJumpDone.current || loading || error || flights === null) return;
+    initialJumpDone.current = true;
+    if (!sorted.length) return;
+    const index = nearestFlightIndex(sorted);
+    setPage(Math.floor(index / 20) + 1);
+    setTarget(index);
+  }, [loading, error, flights, sorted]);
+  useEffect(() => {
     if (target === null) return;
     highlightRef.current?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
     const timer = setTimeout(() => setTarget(null), 2000);
@@ -66,9 +84,7 @@ export default function FlightBoard({ airport, mode }) {
     const data = await load();
     if (!data?.length) return;
     const ordered = [...data].sort((a, b) => (arrivalTime(a) - arrivalTime(b)) * (descending ? -1 : 1));
-    const now = Date.now() / 1000;
-    let index = 0;
-    ordered.forEach((item, i) => { if (Math.abs(arrivalTime(item) - now) < Math.abs(arrivalTime(ordered[index]) - now)) index = i; });
+    const index = nearestFlightIndex(ordered);
     setPage(Math.floor(index / 20) + 1); setTarget(index);
   }
   function changePage(value) {
